@@ -11,6 +11,28 @@ const skills = [
   'Statistics',
   'EEG & Affective Computing',
 ];
+
+// Edit, add or remove projects here. Leave link empty ('') for a card without a link.
+const projects = [
+  {
+    title: 'EEG emotion recognition: rethinking windowing',
+    description: 'A methodological critique of standard windowing pipelines in EEG-based emotion recognition: overlapping windows create pseudo-replication and invalidate statistical inference. Experiments on FACED, DREAMER and AFFEC.',
+    tags: ['EEG', 'Python', 'Statistics'],
+    link: 'https://github.com/martinamissana/REPO-NAME',
+  },
+  {
+    title: 'Second project',
+    description: 'What problem it solves, how you approached it and what came out of it.',
+    tags: ['Python', 'ML'],
+    link: 'https://github.com/martinamissana/REPO-NAME',
+  },
+  {
+    title: 'Third project',
+    description: 'Another short description, different from the others.',
+    tags: ['Deep Learning'],
+    link: 'https://github.com/martinamissana/REPO-NAME',
+  },
+];
 ---
 <Layout title="Martina | AI & ML Engineer">
   <!-- Hero -->
@@ -92,19 +114,30 @@ const skills = [
       <h2 class="text-3xl font-semibold tracking-tight">Projects</h2>
       <p class="mt-3 text-forest-200/60">A few things I've been working on.</p>
 
-      <!-- Placeholder cards: replaced by a content collection in the next step -->
       <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {['Project title', 'Another project', 'A third project'].map((name) => (
-          <div class="rounded-2xl border border-line bg-surface p-6 transition hover:-translate-y-1 hover:border-forest-400/60">
-            <h3 class="text-xl font-semibold">{name}</h3>
-            <p class="mt-2 text-forest-200/60">
-              One or two lines on the problem and the approach.
-            </p>
-            <p class="mt-4 text-xs uppercase tracking-widest text-forest-400">
-              Python &middot; ML
-            </p>
-          </div>
-        ))}
+        {projects.map((p) => {
+          // Card becomes a link only when the project has one
+          const Tag = p.link ? 'a' : 'div';
+          return (
+            <Tag
+              href={p.link || undefined}
+              target={p.link ? '_blank' : undefined}
+              rel={p.link ? 'noopener noreferrer' : undefined}
+              class="flex flex-col rounded-2xl border border-line bg-surface p-6 transition hover:-translate-y-1 hover:border-forest-400/60"
+            >
+              <h3 class="text-xl font-semibold">{p.title}</h3>
+              <p class="mt-3 flex-1 text-forest-200/60">{p.description}</p>
+              <ul class="mt-5 flex flex-wrap gap-2">
+                {p.tags.map((tag) => (
+                  <li class="rounded-full border border-line px-3 py-1 text-xs uppercase tracking-widest text-forest-400">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+              {p.link && <span class="mt-5 text-sm text-forest-300">View on GitHub &rarr;</span>}
+            </Tag>
+          );
+        })}
       </div>
     </div>
   </section>
