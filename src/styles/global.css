@@ -1,1 +1,35 @@
 @import "tailwindcss";
+@import "@fontsource-variable/space-grotesk";
+
+@theme {
+  --font-sans: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #08100b;
+  --color-surface: #0f1a13;
+  --color-line: #1d3326;
+
+  --color-forest-100: #d8efe0;
+  --color-forest-200: #a9d9bb;
+  --color-forest-300: #6fbf8d;
+  --color-forest-400: #3f9163;
+  --color-forest-500: #2d6a4f;
+  --color-forest-600: #1f4d3a;
+}
+
+/* Wide content container: backgrounds stay full-bleed, content is capped.
+   Set max-width to "none" for a truly edge-to-edge layout. */
+@utility wrap {
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 5vw, 5rem);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: var(--color-forest-500);
+  color: var(--color-forest-100);
+}

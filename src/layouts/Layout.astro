@@ -1,17 +1,57 @@
 ---
 import '../styles/global.css';
-const { title } = Astro.props;
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Personal portfolio of Martina, AI and ML engineer.',
+} = Astro.props;
+const year = new Date().getFullYear();
 ---
 <!doctype html>
-<html lang="it">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#08100b" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+    <link rel="icon" href="/favicon.ico?v=2" sizes="64x64" />
     <title>{title}</title>
+    <!-- Smooth client-side page transitions -->
+    <ClientRouter />
   </head>
-  <body class="bg-neutral-950 text-white">
-    <main class="mx-auto max-w-5xl px-6">
+  <body class="bg-bg font-sans text-forest-100 antialiased">
+    <header class="sticky top-0 z-50 border-b border-line/60 bg-bg/70 backdrop-blur">
+      <nav class="wrap flex items-center justify-between py-4">
+        <a href="/" class="font-semibold tracking-tight text-forest-100">Martina</a>
+        <div class="flex gap-6 text-sm text-forest-200/70">
+          <a href="/#about" class="transition hover:text-forest-300">About</a>
+          <a href="/#projects" class="transition hover:text-forest-300">Projects</a>
+          <a href="/#contact" class="transition hover:text-forest-300">Contact</a>
+          <a
+            href="https://github.com/martinamissana"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="transition hover:text-forest-300"
+          >GitHub</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
       <slot />
     </main>
+
+    <footer class="border-t border-line/60">
+      <div class="wrap py-8 text-sm text-forest-200/50">
+        &copy; {year} Martina. Built with Astro.
+      </div>
+    </footer>
   </body>
 </html>

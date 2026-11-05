@@ -1,0 +1,73 @@
+---
+// Decorative scrolling EEG-like signal drawn on a canvas
+---
+<canvas
+  id="eeg"
+  aria-hidden="true"
+  class="absolute inset-x-0 bottom-0 -z-10 h-72 w-full opacity-20 [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]"
+></canvas>
+
+<script>
+  let raf = 0;
+
+  function start() {
+    // Stop any previous loop (page transitions re-run this)
+    cancelAnimationFrame(raf);
+
+    const canvas = document.querySelector<HTMLCanvasElement>('#eeg');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const channels = 6;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+    };
+    new ResizeObserver(resize).observe(canvas);
+    resize();
+
+    // Sum of a few sine "rhythms" plus a little noise per channel
+    const signal = (x: number, t: number, c: number) => {
+      const slow = Math.sin(x * 0.012 + t * 1.1 + c * 1.7) * 0.5;
+      const mid = Math.sin(x * 0.031 - t * 1.9 + c * 3.4) * 0.3;
+      const fast = Math.sin(x * 0.083 + t * 3.7 + c) * 0.15;
+      const noise = ((Math.sin((x + Math.floor(t * 40) * 7.13) * 12.9898 + c * 78.233) * 43758.5453) % 1) * 0.06;
+      return slow + mid + fast + noise;
+    };
+
+    const draw = (time: number) => {
+      const t = time / 1000;
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.lineWidth = 1.5 * dpr;
+      ctx.lineJoin = 'round';
+
+      const band = h / (channels + 1);
+      for (let c = 0; c < channels; c++) {
+        const baseline = band * (c + 1);
+        const amp = band * 0.45;
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += 3 * dpr) {
+          const y = baseline + signal(x / dpr, t, c) * amp;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = c % 2 === 0 ? 'rgba(111,191,141,0.85)' : 'rgba(63,145,99,0.6)';
+        ctx.stroke();
+      }
+
+      if (!reduceMotion) raf = requestAnimationFrame(draw);
+    };
+
+    raf = requestAnimationFrame(draw);
+  }
+
+  // Fires on first load and after every client-side navigation
+  document.addEventListener('astro:page-load', start);
+</script>
